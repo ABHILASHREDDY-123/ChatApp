@@ -1,0 +1,11 @@
+.sidebarbox {
+    border: solid white;
+    border-width: 1px;
+    width: 400%;
+    background-color: rgb(247, 212, 212);
+    border-color: rgb(185, 244, 244);
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: small;
+    height: 13%;
+    color:rgb(150, 151, 152)
+}

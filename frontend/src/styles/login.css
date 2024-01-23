@@ -1,0 +1,49 @@
+.header1{
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1rem;
+  margin: 0;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: larger;
+}
+
+.login {
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: white;
+    box-shadow: rgb(188, 188, 188) 3px 3px;
+    border-radius: 5px;
+    width: fit-content;
+    margin: auto;
+    margin-top: 15%;
+}
+.inputs {
+    background-color: white;
+    margin: auto;
+    display: flex;
+    width: fit-content;
+    margin: 4%;
+    margin-top: 8px;
+    
+}
+
+.loginButton {
+    display: flex;
+    justify-content: start;
+    margin: auto;
+    margin-top: 5%;
+    margin-left: 21%;
+}
+
+.footerLogin {
+    display: flex;
+
+}
+
+.footerText {
+    margin-right: 5px;
+    font-size:15px;
+    
+}
