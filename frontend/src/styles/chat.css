@@ -5,4 +5,12 @@
     display: flex;
     flex-direction: column-reverse;
 }
-
+.singlechat {
+    margin:1rem;
+    background-color: rgb(123, 176, 230);
+    padding-right:1rem;
+    padding-left: 1rem;
+    border-radius: 1rem;
+    height: fit-content;
+    width: fit-content;
+}

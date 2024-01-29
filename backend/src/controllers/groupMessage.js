@@ -4,7 +4,7 @@ const groupMessageGetController  = async (req,res)=>{
     const id = req.params.id;
     try {
     const [results,fields,err] = await  db.execute('SELECT * from GROUP_CHATS where group_id = ?)',[id]);
-    res.send({messages:results});
+    res.send({message:"Success..",payload:results});
     }
     catch(err){
     res.send({error:"Error in retreiving messages"});

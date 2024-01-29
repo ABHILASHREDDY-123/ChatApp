@@ -19,6 +19,21 @@
     margin: auto;
     margin-top: 15%;
 }
+
+.signup{
+    
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background-color: white;
+        box-shadow: rgb(188, 188, 188) 3px 3px;
+        border-radius: 5px;
+        width: fit-content;
+        margin: auto;
+        margin-top: 10%;
+    
+}
+
 .inputs {
     background-color: white;
     margin: auto;

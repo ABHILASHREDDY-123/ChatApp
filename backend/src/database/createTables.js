@@ -33,4 +33,13 @@ module.exports = {
   FOREIGN KEY (sender_id) REFERENCES USERS(id),
   FOREIGN KEY (group_id) REFERENCES GROUPS(id)
 )`,
+  CREATE_RECENT_TABLE:`CREATE TABLE IF NOT EXISTS RECENTS(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    person1 INT NOT NULL,
+    person2 INT NOT NULL,
+    time TIMESTAMP,
+    FOREIGN KEY (person1) REFERENCES USERS(id),
+    FOREIGN KEY (person2) REFERENCES USERS(id),
+    CHECK(person1<person2)
+  )`
 };

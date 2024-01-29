@@ -6,9 +6,9 @@ import socket from "./socket";
 import { useState } from "react";
 const SendMessage = (props) => {
   const [message, setMessage] = useState("");
-  const { receiverId, senderId} = props;
+  const { receiverId, token} = props;
   const handleClick = () => {
-    socket.emit("privateMessage", { message, receiverId,senderId });
+    socket.emit("privateMessage", { message, receiverId,token });
     setMessage("");
   };
   return (
@@ -25,7 +25,7 @@ const SendMessage = (props) => {
         label="Message"
         variant="outlined"
         color="primary"
-        style={{ width: "85%" }}
+        style={{ width: "84%" }}
         onChange={(e) => {
           setMessage(e.target.value);
         }}
