@@ -7,11 +7,15 @@ import Login from './components/login';
 import Signup from './components/signup';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import Navbar from './components/Navbar';
+import {Provider} from "react-redux";
+import store from "./redux/store";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
+  <Provider store={store}>
     <ToastContainer/>
+    <Navbar/>
     <Router>
        <Routes>
          <Route exact path="chat/:id" element={<App toast={toast}/>}/>
@@ -20,6 +24,7 @@ root.render(
          <Route exact path="/signup" element={<Signup toast={toast}/>}/>
        </Routes>
     </Router>
+  </Provider>
   </>
 
 );

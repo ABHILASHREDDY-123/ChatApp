@@ -8,12 +8,21 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Button from "@mui/material/Button";
 import socket from "./socket";
+import { useDispatch } from "react-redux";
+import {
+  addToken,
+  addUser,
+  createError,
+  createSuccess,
+} from "../redux/actionCreators";
 
-const Login = ({ toast }) => {
+const Login = () => {
   const [gmail, setGmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(0);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
   const changeVisiblity = () => {
     setVisible((prev) => {
       return !prev;
@@ -30,16 +39,19 @@ const Login = ({ toast }) => {
         body
       );
       if (resp.data.message) {
-        toast.success(resp.data.message, { theme: "dark" });
-        socket.emit("send_user_id",{userId:resp.data.user_id})
-        localStorage.setItem('chat-app-token',resp.data.token);
-        localStorage.setItem('chat-app-user-id',resp.data.user_id);
+        localStorage.setItem("chat-app-token", resp.data.token);
+        socket.emit("send_user_id", { userId: resp.data.user_id });
+        localStorage.setItem("chat-app-user-id", resp.data.user_id);
+        const data = { gmail, id: resp.data.user_id };
+        dispatch(addUser(data));
+        dispatch(addToken(resp.data.token));
+        dispatch(createSuccess("Login Success"));
         navigate("/chat");
       } else {
-        toast.error(resp.data.error, { theme: "dark" });
+        dispatch(createError(resp.data.error));
       }
     } catch (err) {
-      toast.error(err.message, { theme: "dark" });
+      dispatch(createError(err.message));
     }
   };
   return (
