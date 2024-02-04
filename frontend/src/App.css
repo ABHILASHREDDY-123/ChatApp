@@ -48,13 +48,13 @@ button {
 }
 
 .outerBox{
-  background-color: transparent;
   display: flex;
   margin-left: 5rem;
   margin-right: 5rem;
-  border:solid white;
-  border-width: 1px;
   height: 450px;
+  margin-top: 3.5%;
+  border-bottom-left-radius: 1rem;
+  border-radius: 1rem;
 }
 /* For WebKit browsers (Chrome, Safari) */
 ::-webkit-scrollbar {

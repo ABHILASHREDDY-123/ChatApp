@@ -4,18 +4,43 @@ import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import socket from "./socket";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import "../styles/sendMessage.css";
+
 const SendMessage = (props) => {
+  const { id } = useParams();
   const [message, setMessage] = useState("");
-  const { receiverId, token} = props;
+  const token = useSelector((state) => state.token);
+  const User = useSelector((state) => state.User);
+  const Recents = useSelector((state) => state.Recents);
+  const { receiverId } = props;
+
   const handleClick = () => {
-    socket.emit("privateMessage", { message, receiverId,token });
+    let name = "";
+    Recents.map((r) => {
+      if (r.id == id) {
+        name = r.name;
+      }
+    });
+    socket.emit("privateMessage", {
+      message,
+      receiverId,
+      token,
+      senderName: User.name,
+      receiverName: name,
+    });
     setMessage("");
   };
+
+  if (!id) {
+    return <div>{/* <img   style={{objectFit:"fill"}}></img> */}</div>;
+  }
   return (
     <div className="messageBox">
       <Button
         variant="image"
-        onClick={handleClick}
+        onClick={() => {}}
         style={{ paddingTop: "1.34%" }}
       >
         <AttachFileIcon fontSize="large" color="primary" />
@@ -26,6 +51,8 @@ const SendMessage = (props) => {
         variant="outlined"
         color="primary"
         style={{ width: "84%" }}
+        multiline
+        maxRows={4}
         onChange={(e) => {
           setMessage(e.target.value);
         }}

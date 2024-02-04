@@ -46,7 +46,7 @@ const userLoginController = async (req, res) => {
         const payload = { id: user[0], gmail };
         const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
         res.setHeader('Authorization', `Bearer ${token}`);
-        res.send({ message: "Login successfull!!" ,token,user_id:user[0]});
+        res.send({ message: "Login successfull!!" ,token,userId:user[0],userName:user[1]});
       } else {
         res.send({ error: "Incorrect Credentials" });
       }

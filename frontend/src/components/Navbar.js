@@ -1,27 +1,81 @@
-import { useState,useEffect } from "react";
-const tokenName = "chat-app-token";
+import AppBar from '@mui/material/AppBar';
+import Container from '@mui/material/Container';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Avatar from "@mui/material/Avatar";
+import { useSelector, useDispatch } from "react-redux";
+import { createLogOut } from "../redux/actionCreators";
+import { useNavigate } from "react-router-dom";
+import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
+
 const Navbar = () => {
-  const [token, setToken] = useState(localStorage.getItem(tokenName)|"");
-  const handleLogout = () => {
-    localStorage.removeItem(tokenName);
-    setToken("");
+  const token = useSelector((state) => state.token);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout =  () => {
+    dispatch(createLogOut());
+    navigate("/login");
   };
+
   return (
-    <div>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">
-          Messanger
-        </a>
-        {token && token.length>0 ? (
-          <button class="navbar-brand"  onClick={handleLogout}>
-            SignOut
-          </button>
+    <div  style={{width:"100%"}}>
+      <AppBar position="static">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters style={{display:"flex",justifyContent:"space-between"}}>
+          <div style={{display:"flex",width:"250px",cursor:"pointer"}} onClick={()=>{navigate("/chat")}} >
+          <img
+          alt="Search Icon"
+          src="/icon.jpg"
+          style={{ width: '30px', height: '30px', borderRadius: '8px',marginRight:"5%" }}
+        />
+        <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+            >
+            Messanger
+            </Typography>
+            </div>
+        <div >
+        {token && token.length > 0 ? (
+          <Typography variant="h6" component="div" sx={{
+            display: { xs: 'none', md: 'flex'},
+            mr: 2,
+            fontFamily: 'monospace',
+            fontWeight: 700,
+            color: 'inherit',
+            textDecoration: 'none',
+            cursor:"pointer"
+          }} onClick={handleLogout}>
+            <LogoutIcon/>
+        </Typography>
         ) : (
-          <a class="navbar-brand" href="/login">
-            SignIn
-          </a>
+          <Typography variant="h6" component="a" sx={{
+            display: { xs: 'none', md: 'flex'},
+            mr: 2,
+            fontFamily: 'monospace',
+            fontWeight: 700,
+            color: 'inherit',
+            textDecoration: 'none',
+            cursor:'pointer'
+          }} onClick={handleLogout} >
+            <LoginIcon/>
+        </Typography>
         )}
-      </nav>
+        </div> 
+        </Toolbar>
+        </Container>
+     </AppBar>
     </div>
   );
 };

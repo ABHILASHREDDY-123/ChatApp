@@ -7,12 +7,15 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EmailIcon from "@mui/icons-material/Email";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import { createError, createSuccess } from "../redux/actionCreators";
+import { useDispatch } from 'react-redux';
 
-const Signup = ({ toast }) => {
+const Signup = () => {
   const [userName, setUserName] = useState("");
   const [gmail, setGmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(0);
+  const dispatch = useDispatch();
 
   const changeVisiblity = () => {
     setVisible((prev) => {
@@ -31,14 +34,14 @@ const Signup = ({ toast }) => {
         body
       );
       if (resp.data.message) {
-        toast.success(resp.data.message);
-        toast.success("Thanks for registering...");
-        toast.success("Login now...");
+        dispatch(createSuccess(resp.data.message));
+        dispatch(createSuccess("Thanks for registering..."));
+        dispatch(createSuccess("Login now..."));
       } else {
-        toast.error(resp.data.error, { theme: "dark" });
+        dispatch(createError(resp.data.error))
       }
     } catch (err) {
-      toast.error(err.message, { theme: "dark" });
+      dispatch(createError(err.message));
     }
   };
 

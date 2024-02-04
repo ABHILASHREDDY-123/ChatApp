@@ -15,8 +15,8 @@ root.render(
   <>
   <Provider store={store}>
     <ToastContainer/>
-    <Navbar/>
     <Router>
+       <Navbar/>
        <Routes>
          <Route exact path="chat/:id" element={<App toast={toast}/>}/>
          <Route exact path="/chat" element={<App toast={toast}/>}/>

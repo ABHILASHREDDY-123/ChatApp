@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
-import "../styles/login.css";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Button from "@mui/material/Button";
 import socket from "./socket";
 import { useDispatch } from "react-redux";
+import "../styles/login.css";
 import {
   addToken,
   addUser,
@@ -40,9 +40,9 @@ const Login = () => {
       );
       if (resp.data.message) {
         localStorage.setItem("chat-app-token", resp.data.token);
-        socket.emit("send_user_id", { userId: resp.data.user_id });
-        localStorage.setItem("chat-app-user-id", resp.data.user_id);
-        const data = { gmail, id: resp.data.user_id };
+        socket.emit("send_user_id", { userId: resp.data.userId });
+        localStorage.setItem("chat-app-user-id", resp.data.userId);
+        const data = { gmail, id: resp.data.userId,name:resp.data.userName};
         dispatch(addUser(data));
         dispatch(addToken(resp.data.token));
         dispatch(createSuccess("Login Success"));
