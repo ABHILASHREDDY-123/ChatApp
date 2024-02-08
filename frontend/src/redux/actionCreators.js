@@ -40,6 +40,20 @@ const addRecents = (payload) => {
   };
 };
 
+const addMembers = (payload) => {
+  return {
+    type: ACTION_TYPES.ADD_MEMBERS,
+    payload: payload
+  }
+}
+
+const removeMember = (payload)=>{
+  return {
+    type:ACTION_TYPES.REMOVE_MEMBER,
+    payload:payload
+  }
+}
+
 const addSingleChat = (payload) => {
   return {
     type: ACTION_TYPES.ADD_SINGLE_CHAT,
@@ -86,4 +100,6 @@ export {
   addRecents,
   addSingleChat,
   initialiseChat,
+  addMembers,
+  removeMember
 };

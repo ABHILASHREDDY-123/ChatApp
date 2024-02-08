@@ -63,7 +63,7 @@ export default function SideBar() {
       elevation={1}
         style={{
           width: "inherit",
-          height:"79.4%",
+          height:"81%",
           border: "solid 1px whitesmoke",
           borderRadius: "1rem",
           overflowY: "auto",

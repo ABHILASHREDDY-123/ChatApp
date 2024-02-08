@@ -10,7 +10,8 @@ const initialState = {
     ErrorMessage : "",
     EventMessage : "",
     path:"/login",
-    searchResults : []
+    searchResults : [],
+    members : []
 }
 
 const handleUserLogin = (state,payload)=>{
@@ -75,6 +76,22 @@ const handleUpdateRecents = (state,payload)=>{
     return {...state,Recents:newRecents}
 }
 
+const handleMember = (state,payload)=>{
+    for(let i=0;i<state.members.length;i++){
+         if(state.members[i].id === payload.id){return {...state};}
+    }
+    return {...state,members:[...state.members,payload]};
+}
+
+const handleRemoveMember = (state,payload)=>{
+    const newMembers = [];
+    for(let i=0;i<state.members.length;i++){
+        if(state.members[i].id !== payload.id){
+            newMembers.push(state.members[i]);
+        }
+    }
+    return {...state,members:newMembers};
+}
 const Reducer = (state=initialState,action)=>{
    switch(action.type){
         case ACTION_TYPES.LOGIN_USER : 
@@ -115,6 +132,12 @@ const Reducer = (state=initialState,action)=>{
         
         case ACTION_TYPES.UPDATE_RECENTS:
             return handleUpdateRecents(state,action.payload);
+        
+        case ACTION_TYPES.ADD_MEMBERS:
+            return handleMember(state,action.payload);
+        
+        case ACTION_TYPES.REMOVE_MEMBER:
+            return handleRemoveMember(state,action.payload);
         
         default :
             return state;
