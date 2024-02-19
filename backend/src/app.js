@@ -10,7 +10,7 @@ const groupMessageRouter = require("./routes/groupMessage");
 const authRouter = require("./routes/auth");
 const { createDatabases } = require("./database/intialize");
 const { getUserData, searchUser } = require("./controllers/userController");
-const { isSignedIn } = require("./controllers/authController");
+const { isSignedIn, groupRegisterController } = require("./controllers/authController");
 const { processPrivateMessage } = require("./controllers/privateMessage");
 const dotenv = require("dotenv");
 
@@ -30,6 +30,8 @@ app.use("/privatemessage", privateMessageRouter);
 app.use("/groupmessage", groupMessageRouter);
 app.get("/user/recents", isSignedIn, getUserData);
 app.get("/search/:user", isSignedIn, searchUser);
+app.post("/group/create",isSignedIn,groupRegisterController);
+
 
 var server = http.createServer(app);
 const io = require("socket.io")(server, {

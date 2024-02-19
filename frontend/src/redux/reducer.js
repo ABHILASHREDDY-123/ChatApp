@@ -7,6 +7,7 @@ const initialState = {
     token : localStorage.getItem(tokenName),
     Chats : [],
     Recents : [],
+    Query:"",
     ErrorMessage : "",
     EventMessage : "",
     path:"/login",
@@ -63,7 +64,7 @@ const clearChats = (state)=>{
 }
 
 const handleSearchResults = (state,payload)=>{
-    return {...state,searchResults:payload}
+    return {...state,searchResults:payload.searchResults,Query:payload.query}
 }
 
 const handleUpdateRecents = (state,payload)=>{

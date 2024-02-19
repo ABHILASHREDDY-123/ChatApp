@@ -43,7 +43,8 @@ const Navbar = () => {
               textDecoration: 'none',
             }}
             >
-            Messanger
+            {/* Messanger */}
+            TulBhi
             </Typography>
             </div>
         <div >

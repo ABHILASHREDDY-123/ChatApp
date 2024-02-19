@@ -20,7 +20,7 @@ import {
 } from "../redux/actionCreators";
 
 const Chat = () => {
-  const { id } = useParams();
+  const { id,type } = useParams();
   const paperRef = useRef(null);
   const dispatch = useDispatch();
   const chat = useSelector((state) => state.Chats);

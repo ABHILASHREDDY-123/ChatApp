@@ -6,7 +6,8 @@ const {
   CREATE_GROUP_TABLE,
   CREATE_GROUP_CHAT_TABLE,
   CREATE_PRIVATE_CHAT_TABLE,
-  CREATE_RECENT_TABLE,
+  CREATE_PRIVATE_RECENT_TABLE,
+  CREATE_GROUP_RECENT_TABLE,
 } = require("./createTables");
 
 
@@ -16,7 +17,9 @@ const createDatabases = async () => {
   const [results3, err3] = await db.execute(CREATE_GROUP_MEMBERS);
   const [results4, err4] = await db.execute(CREATE_GROUP_CHAT_TABLE);
   const [results5, err5] = await db.execute(CREATE_PRIVATE_CHAT_TABLE);
-  const [results6,err6] = await db.execute(CREATE_RECENT_TABLE);
+  const [results6,err6] = await db.execute(CREATE_PRIVATE_RECENT_TABLE);
+  const [results7,err7] = await db.execute(CREATE_GROUP_RECENT_TABLE);
+  
 };
 
 module.exports = { createDatabases };

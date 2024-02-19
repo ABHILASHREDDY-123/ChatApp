@@ -27,13 +27,22 @@ import {
 } from "../redux/actionCreators";
 
 const Search = () => {
+  const searchResults = useSelector((state) => state.searchResults);
+  const Query = useSelector(state => state.Query)
+  const members = useSelector(state => state.members);
+  const user = useSelector(state => state.User);
+
   const [open, setOpen] = useState(false);
   const [group, setGroup] = useState(false);
+  const [query, setQuery] = useState(Query);
+  const [name, setName] = useState("");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const searchResults = useSelector((state) => state.searchResults);
-  const [query, setQuery] = useState("");
-  const members = useSelector(state => state.members);
+
+  const GroupSearchResults = searchResults.filter((e)=>{
+      return e.type==="user";
+  })
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -43,18 +52,35 @@ const Search = () => {
     setOpen(false);
   };
 
-  const handleCancel = ()=>{
+  const handleCancel = () => {
     setGroup(false);
   }
-  const handleaddGroup = ()=>{
+  const handleaddGroup = () => {
     setGroup(true);
   }
 
-  const handleCreateGroup = ()=>{
-
+  const handleCreateGroup = async () => {
+    let users = []
+    members.map((e) => { users.push(e.id) })
+    // added himself in group
+    users.push(user.id)
+    // posting the ids of users to create a group...
+    await axios.post(process.env.REACT_APP_API_URL + "/group/create", {
+      name,
+      users
+    },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("chat-app-token")}`,
+          "Content-Type": "application/json",
+        }
+      }
+    )
+    setGroup(false);
   }
 
   const handleSearch = async () => {
+
     try {
       const resp = await axios.get(
         process.env.REACT_APP_API_URL + "/search/" + query,
@@ -65,14 +91,18 @@ const Search = () => {
           },
         }
       );
-      console.log(resp.data.payload);
-      const data = resp.data.payload.map((r) => {
-        return { id: r[0], name: r[1], gmail: r[2] };
+      let data = resp.data.payload.map((r) => {
+        if (r.length === 3)
+          return { id: r[0], name: r[1], gmail: r[2], type: "user" };
+
+        return {
+          id: r[0], name: r[1], type: "group"
+        }
       });
-      dispatch(handleSearchResults(data));
+      console.log(data);
+      dispatch(handleSearchResults({ searchResults: data, query: query }));
     } catch (err) {
       dispatch(createError("No User Found.."));
-      dispatch(handleSearchResults([]));
     }
   };
 
@@ -132,41 +162,49 @@ const Search = () => {
             <List>
               {searchResults &&
                 searchResults.map((e, index) => {
-                  return (
-                    <>
-                      <ListItem
-                        key={index}
-                        disablePadding
-                        style={{ cursor: "pointer", width: "inherit" }}
-                        onClick={async () => {
-                          var t = Date.now();
-                          console.log([e.id, e.name, t]);
-                          setOpen(false);
-                          dispatch(updateRecents([e.id, e.name, t]));
-                          navigate("/chat/" + e.id);
-                        }}
-                      >
-                        <ListItemButton style={{ borderRadius: "1rem" }}>
-                          <ListItemText
-                            primary={"name : " + e.name}
-                            secondary={
-                              <React.Fragment>
-                                <Typography
-                                  sx={{ display: "inline" }}
-                                  component="span"
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {e.gmail}
-                                </Typography>
-                              </React.Fragment>
+                  if (e.id !== user.id)
+                    return (
+                      <>
+                        <ListItem
+                          key={index}
+                          disablePadding
+                          style={{ cursor: "pointer", width: "inherit" }}
+                          onClick={async () => {
+                            var t = Date.now();
+                            if(e.type==="user"){
+                            console.log([e.id, e.name, t]);
+                            setOpen(false);
+                            dispatch(updateRecents([e.id, e.name, t]));
+                            navigate("/chat/" + e.id+"/user");
                             }
-                          />
-                        </ListItemButton>
-                      </ListItem>
-                      <Divider />
-                    </>
-                  );
+                            else {
+                              setOpen(false);
+                              dispatch(updateRecents([e.id, e.name, t]));
+                              navigate("/chat/" + e.id+"/group");
+                            }
+                          }}
+                        >
+                          <ListItemButton style={{ borderRadius: "1rem" }}>
+                            <ListItemText
+                              primary={"name : " + e.name}
+                              secondary={
+                                <React.Fragment>
+                                  <Typography
+                                    sx={{ display: "inline" }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.secondary"
+                                  >
+                                    {e.gmail?e.gmail:"Type : Group"}
+                                  </Typography>
+                                </React.Fragment>
+                              }
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                        <Divider />
+                      </>
+                    );
                 })}
             </List>
           </DialogContentText>
@@ -179,7 +217,7 @@ const Search = () => {
 
 
 
-       {/* second dialog box for groups */}
+      {/* second dialog box for groups */}
       <Dialog open={group} onClose={handleCancel} fullWidth maxWidth={"sm"}>
         <DialogTitle>Search User</DialogTitle>
         <DialogContent style={{ paddingBottom: "0rem" }}>
@@ -188,7 +226,21 @@ const Search = () => {
             required
             margin="dense"
             id="name"
-            name="email"
+            name="group"
+            label="Group Name"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
+          />
+          <TextField
+            required
+            margin="dense"
+            id="name"
+            name="name"
             label="search"
             type="text"
             fullWidth
@@ -198,86 +250,88 @@ const Search = () => {
               setQuery(e.target.value);
             }}
           />
-           <DialogActions>
-          <Button onClick={handleSearch}>Search</Button>
+
+          <DialogActions>
+            <Button onClick={handleSearch}>Search</Button>
           </DialogActions>
           <DialogContentText>
-              Members ({members.length}):
-            <List style={{display:"flex",flexWrap:"wrap", alignItems:"start"}}>
-              {members && members.map((e,index)=>{
+            Members ({members.length}):
+            <List style={{ display: "flex", flexWrap: "wrap", alignItems: "start" }}>
+              {members && members.map((e, index) => {
                 return (
-                <>
-                <ListItem
-                  key={index}
-                  disablePadding
-                  style={{ cursor: "pointer", width: "inherit" ,backgroundColor:"#EFEFEF",borderRadius:"1rem",marginRight:"0.2rem",marginBottom:"0.2rem"}}
-                  onClick={async () => {
-                    dispatch(removeMember({id:e.id,name:e.name,gmail:e.gmail}));
-                  }}
-                  
-                >
-                  <ListItemButton style={{ borderRadius: "1rem" }}>
-                    <ListItemText
-                      primary={e.name}
-                      secondary={
-                        <React.Fragment>
-                          <Typography
-                            sx={{ display: "inline" }}
-                            component="span"
-                            variant="body2"
-                            color="text.secondary"
-                          >
-                            {e.gmail}
-                          </Typography>
-                        </React.Fragment>
-                      }
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <Divider />
-              </>)
+                  <>
+                    <ListItem
+                      key={index}
+                      disablePadding
+                      style={{ cursor: "pointer", width: "inherit", backgroundColor: "#EFEFEF", borderRadius: "1rem", marginRight: "0.2rem", marginBottom: "0.2rem" }}
+                      onClick={async () => {
+                        dispatch(removeMember({ id: e.id, name: e.name, gmail: e.gmail }));
+                      }}
+
+                    >
+                      <ListItemButton style={{ borderRadius: "1rem" }}>
+                        <ListItemText
+                          primary={e.name}
+                          secondary={
+                            <React.Fragment>
+                              <Typography
+                                sx={{ display: "inline" }}
+                                component="span"
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {e.gmail}
+                              </Typography>
+                            </React.Fragment>
+                          }
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                    <Divider />
+                  </>)
               })}
             </List>
           </DialogContentText>
           <DialogContentText paddingTop={2} paddingBottom={0}>
-            Results ({searchResults.length}):
+            Results ({GroupSearchResults.length}):
             <List>
-              {searchResults &&
-                searchResults.map((e, index) => {
-                  return (
-                    <>
-                      <ListItem
-                        key={index}
-                        disablePadding
-                        style={{ cursor: "pointer", width: "inherit" }}
-                        onClick={async () => {
-                          var t = Date.now();
-                          console.log(e);
-                          console.log([e.id, e.name, t]);
-                          dispatch(addMembers({id:e.id,name:e.name,gmail:e.gmail}));
-                        }}
-                      >
-                        <ListItemButton style={{ borderRadius: "1rem" }}>
-                          <ListItemText
-                            primary={"name : " + e.name}
-                            secondary={
-                              <React.Fragment>
-                                <Typography
-                                  sx={{ display: "inline" }}
-                                  component="span"
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {e.gmail}
-                                </Typography>
-                              </React.Fragment>
-                            }
-                          />
-                        </ListItemButton>
-                      </ListItem>
-                      <Divider />
-                    </>
-                  );
+              {GroupSearchResults &&
+                GroupSearchResults.map((e, index) => {
+                  if (e.id !== user.id)
+                    return (
+                      <>
+                        <ListItem
+                          key={index}
+                          disablePadding
+                          style={{ cursor: "pointer", width: "inherit" }}
+                          onClick={async () => {
+                            var t = Date.now();
+                            console.log(e);
+                            console.log([e.id, e.name, t]);
+                            dispatch(addMembers({ id: e.id, name: e.name, gmail: e.gmail }));
+                          }}
+                        >
+                          <ListItemButton style={{ borderRadius: "1rem" }}>
+                            <ListItemText
+                              primary={"name : " + e.name}
+                              secondary={
+                                <React.Fragment>
+                                  <Typography
+                                    sx={{ display: "inline" }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.secondary"
+                                  >
+                                    {e.gmail}
+                                  </Typography>
+                                </React.Fragment>
+                              }
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                        <Divider />
+                      </>
+                    );
                 })}
             </List>
           </DialogContentText>

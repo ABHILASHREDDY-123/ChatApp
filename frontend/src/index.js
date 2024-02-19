@@ -18,7 +18,7 @@ root.render(
     <Router>
        <Navbar/>
        <Routes>
-         <Route exact path="chat/:id" element={<App toast={toast}/>}/>
+         <Route exact path="chat/:id/:type" element={<App toast={toast}/>}/>
          <Route exact path="/chat" element={<App toast={toast}/>}/>
          <Route exact path="/login" element={<Login toast={toast}/>}/>
          <Route exact path="/signup" element={<Signup toast={toast}/>}/>

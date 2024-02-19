@@ -6,7 +6,10 @@ const searchUser = async (req, res) => {
     const [results, err] = await db.execute(
       `SELECT id,name,gmail from USERS where name like '${name}%'`
     );
-    res.send({ payload: results });
+    const [results2, err2] = await db.execute(
+      `SELECT id,name from GROUPS where name like '${name}%'`
+    );
+    res.send({ payload: [...results,...results2] });
   } catch (err) {
     console.log(err);
     res.send({ error: err.message });

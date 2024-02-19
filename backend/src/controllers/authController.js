@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const isSignedIn = async (req, res, next) => {
+  console.log(req.body)
   const token = req.headers.authorization.substr(7);
   try {
     if (token) {
