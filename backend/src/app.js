@@ -18,7 +18,7 @@ dotenv.config();
 
 var app = express();
 
-createDatabases();
+
 
 app.use(morgan("tiny"));
 app.use(express.json());
