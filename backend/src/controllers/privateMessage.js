@@ -1,89 +1,75 @@
 const db = require("../database/db");
 const jwt = require("jsonwebtoken");
+const PrivateChats = require("../schemas/privateChatSchema");
+const PrivateRecents = require("../schemas/privateRecentSchema");
 
 const processPrivateMessage = async (io, socket, payload, clients) => {
   const token = payload.token;
   const { receiverId } = payload;
   try {
     const user = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log(user);
     const socket_id = clients[receiverId];
-    clients[user.id] = socket.id;
+    clients[user._id] = socket.id;
     const val = await privateMessagePostController(
       payload.message,
-      user.id,
+      user._id,
       payload.receiverId
     );
+    const message = val[1];
+    const recent = val[0];
     if (socket_id) {
       io.to(socket_id).emit("receivePrivateMessage", {
-        message: payload.message,
-        senderId: user.id,
-        senderName: payload.senderName,
-        insertId: val[0],
-        time: val[1],
-        receiverId,
-        receiverName: payload.receiverName,
+        message:message,
+        recent
       });
     }
     socket.emit("successPrivateMessage", {
-      message: payload.message,
-      senderId: user.id,
-      insertId: val[0],
-      time: val[1],
-      receiverId,
-      senderName: payload.senderName,
-      receiverName: payload.receiverName,
+      message:message,
+      recent
     });
   } catch (err) {
     console.log(err);
-    socket.emit("errorPrivateMessage", { error: err.message });
+    socket.emit("errorPrivateMessage", { error: err.message,err:1});
   }
 };
 
+
+
 const privateMessageGetController = async (req, res) => {
   const id = req.params.id;
-  const user_id = req.user.id;
+  const user_id = req.user._id;
   try {
-    const [results, fields, err] = await db.execute(
-      "SELECT * from PRIVATE_CHATS where (sender_id = ? and receiver_id = ?) or (sender_id = ? and receiver_id = ?)",
-      [user_id, id, id, user_id]
-    );
-    res.send({ message: "Success..", payload: results });
+    console.log(id,user_id);
+    const results = await PrivateChats.find({$or:[{sender:id,recipient:user_id},{sender:user_id,recipient:id}]}).exec();
+    res.send({ message: "Success..", payload: results,err:0 });
   } catch (err) {
-    res.send({ error: "Error in retreiving messages" });
+    console.log(err);
+    res.send({ error: "Error in retreiving messages",err:1});
   }
 };
 
 const privateMessagePostController = async (message, user_id, id) => {
   try {
-    const [results] = await db.execute(
-      "INSERT INTO PRIVATE_CHATS (message,sender_id,receiver_id) VALUES (?,?,?)",
-      [message, user_id, id]
-    );
+    console.log(user_id,id);
+    let results = await PrivateChats({message,sender:user_id,recipient:id});
+    results = await results.save();
     const a = id < user_id ? id : user_id;
-    const insertId = results.insertId;
     const b = id < user_id ? user_id : id;
-    const currentTimestamp = Date.now();
-    const time = new Date(currentTimestamp)
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
-    const [results1] = await db.execute(
-      "SELECT * from RECENTS where person1=? and person2=?",
-      [a, b]
-    );
-    if (results1.length) {
-      const [results2] = await db.execute(
-        "UPDATE RECENTS SET time=? where person1=? and person2=?",
-        [time, a, b]
-      );
+    let results1 = await PrivateRecents.findOne({user1:a,user2:b})
+    if (results1) {
+      results1 = await results1.save();
     } else {
-      const [results2] = await db.execute(
-        "INSERT INTO RECENTS (person1,person2,time) VALUES (?,?,?)",
-        [a, b, time]
-      );
+     results1 = PrivateRecents({user1:a,user2:b});
+     results1 = await results1.save();
     }
-    if (results && results.affectedRows == 1) {
-      return [insertId, currentTimestamp.getTime()];
+    console.log(results1);
+    results1 = await PrivateRecents.populate(results1,{path:"user1",select:"-password"})
+    console.log(results1);
+    results1 = await PrivateRecents.populate(results1,{path:"user2",select:"-password"})
+    console.log(results1);
+    if (results1){
+      return [results1,results];
     } else {
       const error = new Error("Server Error!!");
       error.status(400);
@@ -97,5 +83,5 @@ const privateMessagePostController = async (message, user_id, id) => {
 module.exports = {
   privateMessageGetController,
   privateMessagePostController,
-  processPrivateMessage,
+  processPrivateMessage
 };

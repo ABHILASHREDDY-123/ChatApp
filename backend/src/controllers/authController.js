@@ -1,6 +1,9 @@
 const db = require("../database/db");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const Users = require("../schemas/userSchema");
+const Groups = require("../schemas/groupSchema");
+const GroupMembers = require("../schemas/groupMemSchema");
 dotenv.config();
 
 const isSignedIn = async (req, res, next) => {
@@ -12,71 +15,66 @@ const isSignedIn = async (req, res, next) => {
       req.user = user;
       next();
     } else {
-      res.send({ error: "Login Required!!" });
+      res.send({ error: "Login Required!!",err:1 });
     }
   } catch (err) {
-    res.send({ error: "Login again and try.." });
+    res.send({ error: "Login again and try.." ,err:1});
   }
 };
 const userRegisterController = async (req, res) => {
   const { name, gmail, password } = req.body;
   try {
-    const [results, err] = await db.execute(
-      "INSERT INTO USERS (name,gmail,password) VALUES (?,?,?)",
-      [name, gmail, password]
-    );
-    if (results && results.affectedRows == 1) {
-      res.send({ message: "Succesfully Registered!!" });
-    }
+     const user = await Users.findOne({gmail});
+     if(user){
+        res.status(200).send({message:"User already exists",err:0});
+     }
+     else {
+        let user = Users({name,gmail,password});
+        user = await user.save();
+        res.status(200).send({user,message:"User created",err:0});
+     }
   } catch (err) {
-    res.send({ error: err.message });
+    res.status(200).send({error:err.message,err:1});
   }
 };
 
 const userLoginController = async (req, res) => {
   const { gmail, password } = req.body;
   try {
-    const [results, err] = await db.execute(
-      "SELECT * from USERS where gmail = ?",
-      [gmail]
-    );
-    console.log(results);
-    if (results.length) {
-      const user = results[0];
-      if (user[3] == password) {
-        const payload = { id: user[0], gmail };
+    const results = await Users.findOne({gmail});
+    if (results) {
+      const user = results;
+      if (user.password === password) {
+        user.password=undefined;
+        const payload = {_id:user._id,name:user.name,gmail:user.gmail};
         const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
         res.setHeader('Authorization', `Bearer ${token}`);
-        res.send({ message: "Login successfull!!" ,token,userId:user[0],userName:user[1]});
+        res.send({ message: "Login successfull!!" ,token,user,err:0});
       } else {
-        res.send({ error: "Incorrect Credentials" });
+        res.status(200).send({ error: "Incorrect Credentials",err:1 });
       }
     } else {
-      res.send({ error: "Incorrect Credentials" });
+      res.status(200).send({ error: "Incorrect Credentials",err:1 });
     }
   } catch (err) {
-    console.log(err);
+    res.send({error:err.message,err:1});
   }
 };
 
 const groupRegisterController = async (req, res) => {
   const { name, users } = req.body;
   try {
-    const [result, err] = await db.execute(
-      "INSERT INTO GROUPS (name) VALUES (?)",
-      [name]
-    );
-    const group_id = result.insertId;
+    let group = Groups({name});
+    group = await group.save();
     const queryPromises = users.map(async (u) => {
-      return await db.execute(
-        "INSERT INTO GROUP_MEMBERS (member_id,group_id) VALUES (?,?)",
-        [u, group_id]
-      );
+      const gm =  GroupMembers({group:group._id,user:u})
+      return await gm.save();
     });
     await Promise.all(queryPromises);
-    res.send({ message: "Succesfully Group Created!!" });
+    console.log(queryPromises);
+    res.status(200).send({ message: "Succesfully Group Created!!",err:0 });
   } catch (err) {
-    res.send({ error: err.message });
+    res.send({ error: err.message,err:1 });
   }
 };
 

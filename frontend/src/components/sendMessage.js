@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 import "../styles/sendMessage.css";
 
 const SendMessage = (props) => {
-  const { id } = useParams();
+  const { id,type } = useParams();
   const [message, setMessage] = useState("");
   const token = useSelector((state) => state.token);
   const User = useSelector((state) => state.User);
@@ -19,10 +19,11 @@ const SendMessage = (props) => {
   const handleClick = () => {
     let name = "";
     Recents.map((r) => {
-      if (r.id == id) {
+      if (r._id == id) {
         name = r.name;
       }
     });
+    if(type==="user"){
     socket.emit("privateMessage", {
       message,
       receiverId,
@@ -30,6 +31,14 @@ const SendMessage = (props) => {
       senderName: User.name,
       receiverName: name,
     });
+  }
+  else {
+    socket.emit("groupMessage",{
+      message,
+      token,
+      groupId:id
+    });
+  }
     setMessage("");
   };
 
