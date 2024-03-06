@@ -42,8 +42,7 @@ const Login = () => {
         localStorage.setItem("chat-app-token", resp.data.token);
         socket.emit("send_user_id", { userId: resp.data.userId });
         localStorage.setItem("chat-app-user-id", resp.data.userId);
-        const data = { gmail, id: resp.data.userId,name:resp.data.userName};
-        dispatch(addUser(data));
+        dispatch(addUser(resp.data.user));
         dispatch(addToken(resp.data.token));
         dispatch(createSuccess("Login Success"));
         navigate("/chat");

@@ -31,6 +31,7 @@ const handleInitialiseChat = (state,payload) =>{
 
 const handleSingleChat = (state,payload) =>{
     return {...state,Chats:[...state.Chats,payload]};
+    return state;
 }
 
 const handleMultiChats = (state,payload)=>{
@@ -69,10 +70,10 @@ const handleSearchResults = (state,payload)=>{
 
 const handleUpdateRecents = (state,payload)=>{
     let newRecents = [];
-    newRecents.push({id:payload[0],name:payload[1],time:payload[2]});
-    console.log(newRecents);
+    newRecents.push(payload);
+    console.log(payload);
     state.Recents.map((r)=>{
-        if(r.id != payload[0]){newRecents.push(r);}
+        if(r._id != payload._id){newRecents.push(r);}
     })
     return {...state,Recents:newRecents}
 }

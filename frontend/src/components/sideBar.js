@@ -6,7 +6,6 @@ import Avatar from "@mui/material/Avatar";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
 import Search from "./Search";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -31,15 +30,13 @@ export default function SideBar() {
             },
           }
         );
-        if (resp.data.message) {
-          const Data = resp.data.payload.map((r) => {
-            const t = new Date(r[2]);
-            return { id: r[0], name: r[1], time: t.getTime() };
-          });
-          Data.sort((a, b) => {
-            return b.time - a.time;
-          });
-          dispatch(addRecents(Data));
+        if (!resp.data.err) {
+          const users = resp.data.payload.map((e)=>{
+            if(e.gmail)e.type="user";
+            else {e.type="group";}
+            return e;
+          })
+          dispatch(addRecents(users));
         } else {
           dispatch(createError(resp.data.error));
         }
@@ -70,21 +67,21 @@ export default function SideBar() {
         }}
       >
         <List disablePadding style={{ width: "inherit" }}>
-          {recents.map((e, index) => {
+          {recents.map((e, index) => { console.log(e);
             return (
               
                 <ListItem
                   disablePadding
                   key={index}
                   style={{
-                    backgroundColor: e.id == id ? "#e9e7e7" : "white",
+                    backgroundColor: e._id == id ? "#e9e7e7" : "white",
                     width: "inherit",
                   }}
                 >
                   <ListItemButton
                     component="div"
                     onClick={() => {
-                      navigate("/chat/" + e.id);
+                      navigate("/chat/" + e._id+"/"+e.type);
                     }}
                   >
                     <Avatar

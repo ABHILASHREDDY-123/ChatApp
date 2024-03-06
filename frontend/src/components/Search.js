@@ -61,9 +61,10 @@ const Search = () => {
 
   const handleCreateGroup = async () => {
     let users = []
-    members.map((e) => { users.push(e.id) })
+    console.log(members);
+    members.map((e) => { users.push(e._id) })
     // added himself in group
-    users.push(user.id)
+    users.push(user._id)
     // posting the ids of users to create a group...
     await axios.post(process.env.REACT_APP_API_URL + "/group/create", {
       name,
@@ -91,13 +92,10 @@ const Search = () => {
           },
         }
       );
-      let data = resp.data.payload.map((r) => {
-        if (r.length === 3)
-          return { id: r[0], name: r[1], gmail: r[2], type: "user" };
-
-        return {
-          id: r[0], name: r[1], type: "group"
-        }
+      const data = resp.data.payload.map((r)=>{
+        if(r.gmail){r.type="user";}
+        else {r.type="group";}
+        return r;
       });
       console.log(data);
       dispatch(handleSearchResults({ searchResults: data, query: query }));
@@ -162,7 +160,7 @@ const Search = () => {
             <List>
               {searchResults &&
                 searchResults.map((e, index) => {
-                  if (e.id !== user.id)
+                  if (e._id !== user.id)
                     return (
                       <>
                         <ListItem
@@ -170,17 +168,15 @@ const Search = () => {
                           disablePadding
                           style={{ cursor: "pointer", width: "inherit" }}
                           onClick={async () => {
-                            var t = Date.now();
                             if(e.type==="user"){
-                            console.log([e.id, e.name, t]);
                             setOpen(false);
-                            dispatch(updateRecents([e.id, e.name, t]));
-                            navigate("/chat/" + e.id+"/user");
+                            dispatch(updateRecents(e));
+                            navigate("/chat/" + e._id+"/user");
                             }
                             else {
                               setOpen(false);
-                              dispatch(updateRecents([e.id, e.name, t]));
-                              navigate("/chat/" + e.id+"/group");
+                              dispatch(updateRecents(e));
+                              navigate("/chat/" + e._id+"/group");
                             }
                           }}
                         >
@@ -297,7 +293,7 @@ const Search = () => {
             <List>
               {GroupSearchResults &&
                 GroupSearchResults.map((e, index) => {
-                  if (e.id !== user.id)
+                  if (e._id !== user.id)
                     return (
                       <>
                         <ListItem
@@ -307,8 +303,7 @@ const Search = () => {
                           onClick={async () => {
                             var t = Date.now();
                             console.log(e);
-                            console.log([e.id, e.name, t]);
-                            dispatch(addMembers({ id: e.id, name: e.name, gmail: e.gmail }));
+                            dispatch(addMembers(e));
                           }}
                         >
                           <ListItemButton style={{ borderRadius: "1rem" }}>
