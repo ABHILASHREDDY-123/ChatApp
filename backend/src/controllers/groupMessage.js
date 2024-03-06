@@ -1,4 +1,3 @@
-const db = require("../database/db");
 const GroupChats = require("../schemas/groupChatSchema");
 const GroupMembers = require("../schemas/groupMemSchema");
 const Users = require("../schemas/userSchema");

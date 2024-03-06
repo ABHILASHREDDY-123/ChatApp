@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import socket from "./socket";
 import axios from "axios";
 import Typography from "@mui/material/Typography";
-
 import {
   addSingleChat,
   clearChat,
@@ -18,9 +17,10 @@ import {
   initialiseChat,
   updateRecents,
 } from "../redux/actionCreators";
+import { Box } from "@mui/material";
 
 const Chat = () => {
-  const { id,type } = useParams();
+  const { id, type } = useParams();
   const paperRef = useRef(null);
   const dispatch = useDispatch();
   const chat = useSelector((state) => state.Chats);
@@ -43,7 +43,7 @@ const Chat = () => {
     await dispatch(
       addSingleChat(payload.message)
     );
-    if(payload.recent.user1._id == id){
+    if (payload.recent.user1._id == id) {
       await dispatch(
         updateRecents(payload.recent.user1)
       );
@@ -60,13 +60,14 @@ const Chat = () => {
   socket.on("receivePrivateMessage", async (payload) => {
     if (payload) {
       await dispatch(createSuccess("message received"));
+      console.log(payload);
       await dispatch(
         addSingleChat(payload.message)
       );
-      if(payload.recent.user1._id == id){
-      await dispatch(
-        updateRecents(payload.recent.user1)
-      );
+      if (payload.recent.user1._id == id) {
+        await dispatch(
+          updateRecents(payload.recent.user1)
+        );
       }
       else {
         await dispatch(
@@ -87,7 +88,7 @@ const Chat = () => {
       await dispatch(
         updateRecents(payload.group)
       );
-      
+
       const paper = document.getElementsByClassName("scroller")[0];
       paper.scrollTop = paper.scrollHeight;
     }
@@ -98,18 +99,18 @@ const Chat = () => {
         dispatch(clearChat());
         return;
       }
-      if(type=="user"){
-      const resp = await axios.get(
-        process.env.REACT_APP_API_URL + `/privatemessage/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("Response ",resp.data);
-      await dispatch(initialiseChat(resp.data.payload));
+      if (type == "user") {
+        const resp = await axios.get(
+          process.env.REACT_APP_API_URL + `/privatemessage/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Response ", resp.data);
+        await dispatch(initialiseChat(resp.data.payload));
       }
       else {
         const resp = await axios.get(
@@ -121,7 +122,7 @@ const Chat = () => {
             },
           }
         );
-        console.log("Response ",resp.data);
+        console.log("Response ", resp.data);
         await dispatch(initialiseChat(resp.data.payload));
       }
       const paper = document.getElementsByClassName("scroller")[0];
@@ -145,19 +146,44 @@ const Chat = () => {
       >
         {chat &&
           chat.map((e) => {
-            console.log(e.sender._id , user_id);
+            console.log(e.sender._id, user_id);
             return (
-              <div
-                className="singlechat"
+              <div className="singlechat" 
+              style={{display:"grid",
+              marginLeft: type == "user" ? (e.sender == id ? null : "auto") : (e.sender._id == user_id ? "auto" : null),
+              }}>
+                <div 
                 style={{
                   display: "flex",
-                  marginLeft: type=="user"?(e.sender == id ? null : "auto"):(e.sender._id == user_id? "auto":null),
-                }}
+                  marginLeft: type == "user" ? (e.sender == id ? null : "auto") : (e.sender._id == user_id ? "auto" : null),
+                  }}
+                >
+
+               {e.media ? <Box
+                  component="img"
+                  sx={{
+                    height: 233,
+                    width: 350,
+                    maxHeight: { xs: 233, md: 167 },
+                    maxWidth: { xs: 350, md: 250 },
+                  }}
+                  alt="Error"
+                  src={e.media}
+                  /> : <></>}
+                  </div>
+              <div
+                
+                style={{
+                  display: "flex",
+                  marginLeft: type == "user" ? (e.sender == id ? null : "auto") : (e.sender._id == user_id ? "auto" : null),
+                  }}
               >
+               
                 <Typography variant="body1" style={{ whiteSpace: "pre-line" }}>
                   {e.message}
                 </Typography>
               </div>
+                </div>
             );
           })}
       </Paper>
