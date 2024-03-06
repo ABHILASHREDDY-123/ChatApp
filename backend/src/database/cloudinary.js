@@ -1,9 +1,11 @@
 const cloudinary = require('cloudinary');
-          
+const dotenv = require("dotenv");
+dotenv.config();
+
 cloudinary.config({ 
-  cloud_name: 'dumxx9mln', 
-  api_key: '584468821561587', 
-  api_secret: '-eSuVkxQ4V0HAW4T3TjbFKyzcVA' 
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.API_KEY, 
+  api_secret: process.env.API_SECRET 
 });
 
 

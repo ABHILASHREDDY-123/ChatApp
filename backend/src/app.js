@@ -9,13 +9,14 @@ const mongoose = require("mongoose");
 const privateMessageRouter = require("./routes/privateMessage");
 const groupMessageRouter = require("./routes/groupMessage");
 const authRouter = require("./routes/auth");
-const { createDatabases } = require("./database/intialize");
 const { getUserData, searchUser } = require("./controllers/userController");
 const { isSignedIn, groupRegisterController } = require("./controllers/authController");
 const { processPrivateMessage } = require("./controllers/privateMessage");
 const {processGroupMessage} = require("./controllers/groupMessage");
 const dotenv = require("dotenv");
-const DB_URL = "mongodb://localhost:27017/chatApp";
+dotenv.config();
+
+const DB_URL = process.env.DB_URL;
 
 dotenv.config();
 

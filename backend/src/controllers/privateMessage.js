@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken");
 const PrivateChats = require("../schemas/privateChatSchema");
 const PrivateRecents = require("../schemas/privateRecentSchema");
 const mediaController = require("./mediaController");
-const multer = require("multer");
-const storage = multer.memoryStorage();
 
 const processPrivateMessage = async (io, socket, payload, clients) => {
   const token = payload.token;

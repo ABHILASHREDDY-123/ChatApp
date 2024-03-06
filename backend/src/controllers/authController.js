@@ -1,4 +1,3 @@
-const db = require("../database/db");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const Users = require("../schemas/userSchema");
