@@ -22,7 +22,11 @@ dotenv.config();
 
 var app = express();
 
-mongoose.connect(DB_URL).then(() => {
+mongoose.connect(DB_URL ,{
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  dbName: 'chatApp',
+}).then(() => {
   console.log("Database Connected...");
 })
   .catch((err) => {
