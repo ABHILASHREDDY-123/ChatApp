@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import Home from './components/Home';
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Login from './components/login';
 import Signup from './components/signup';
@@ -18,6 +19,7 @@ root.render(
     <Router>
        <Navbar/>
        <Routes>
+         <Route exact path="/" element={<Home/>}/>
          <Route exact path="chat/:id/:type" element={<App toast={toast}/>}/>
          <Route exact path="/chat" element={<App toast={toast}/>}/>
          <Route exact path="/login" element={<Login toast={toast}/>}/>
