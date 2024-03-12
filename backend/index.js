@@ -6,13 +6,13 @@ const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-const privateMessageRouter = require("./routes/privateMessage");
-const groupMessageRouter = require("./routes/groupMessage");
-const authRouter = require("./routes/auth");
-const { getUserData, searchUser } = require("./controllers/userController");
-const { isSignedIn, groupRegisterController } = require("./controllers/authController");
-const { processPrivateMessage } = require("./controllers/privateMessage");
-const {processGroupMessage} = require("./controllers/groupMessage");
+const privateMessageRouter = require("./src/routes/privateMessage");
+const groupMessageRouter = require("./src/routes/groupMessage");
+const authRouter = require("./src/routes/auth");
+const { getUserData, searchUser } = require("./src/controllers/userController");
+const { isSignedIn, groupRegisterController } = require("./src/controllers/authController");
+const { processPrivateMessage } = require("./src/controllers/privateMessage");
+const {processGroupMessage} = require("./src/controllers/groupMessage");
 const dotenv = require("dotenv");
 dotenv.config();
 
