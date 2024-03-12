@@ -1,9 +1,9 @@
 {
-    "version": 2,
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/"
-        }
-    ]
-}
+    "functions": {
+      "api": {
+        "handler": "backend/index.handler",
+        "runtime": "nodejs14.x"
+      }
+    }
+  }
+  
