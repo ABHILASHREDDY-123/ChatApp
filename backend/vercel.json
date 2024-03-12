@@ -1,9 +1,8 @@
 {
     "functions": {
-      "api": {
-        "src": "backend/index.js",
-        "runtime": "nodejs14.x"
+      "*./.js": {
+        "memory": 3009,
+        "maxDuration": 30
       }
     }
   }
-  
