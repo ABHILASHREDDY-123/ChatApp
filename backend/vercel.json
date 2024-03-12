@@ -1,7 +1,7 @@
 {
     "functions": {
       "api": {
-        "handler": "backend/index.handler",
+        "src": "backend/index.js",
         "runtime": "nodejs14.x"
       }
     }
