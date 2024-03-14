@@ -38,7 +38,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
-app.use("/",(req,res)=>{
+app.use("/home",(req,res)=>{
   res.send("Hello World");
 })
 
