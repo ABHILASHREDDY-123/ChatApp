@@ -160,7 +160,7 @@ const Search = () => {
             <List>
               {searchResults &&
                 searchResults.map((e, index) => {
-                  if (e._id !== user.id)
+                  if (e._id !== user._id)
                     return (
                       <>
                         <ListItem
@@ -261,7 +261,7 @@ const Search = () => {
                       disablePadding
                       style={{ cursor: "pointer", width: "inherit", backgroundColor: "#EFEFEF", borderRadius: "1rem", marginRight: "0.2rem", marginBottom: "0.2rem" }}
                       onClick={async () => {
-                        dispatch(removeMember({ id: e.id, name: e.name, gmail: e.gmail }));
+                        dispatch(removeMember({ _id: e._id, name: e.name, gmail: e.gmail }));
                       }}
 
                     >
@@ -293,7 +293,7 @@ const Search = () => {
             <List>
               {GroupSearchResults &&
                 GroupSearchResults.map((e, index) => {
-                  if (e._id !== user.id)
+                  if (e._id !== user._id)
                     return (
                       <>
                         <ListItem
