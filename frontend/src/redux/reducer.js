@@ -80,7 +80,7 @@ const handleUpdateRecents = (state,payload)=>{
 
 const handleMember = (state,payload)=>{
     for(let i=0;i<state.members.length;i++){
-         if(state.members[i].id === payload.id){return {...state};}
+         if(state.members[i]._id === payload._id){return {...state};}
     }
     return {...state,members:[...state.members,payload]};
 }
@@ -88,7 +88,7 @@ const handleMember = (state,payload)=>{
 const handleRemoveMember = (state,payload)=>{
     const newMembers = [];
     for(let i=0;i<state.members.length;i++){
-        if(state.members[i].id !== payload.id){
+        if(state.members[i]._id !== payload._id){
             newMembers.push(state.members[i]);
         }
     }
