@@ -1,6 +1,7 @@
 import io from "socket.io-client";
 
-const socket = io.connect("http://localhost:8000/", {
+const url = process.env.REACT_APP_API_URL;
+const socket = io.connect(url+"/", {
   query: { token: localStorage.getItem("chat-app-token") },
 });
 
